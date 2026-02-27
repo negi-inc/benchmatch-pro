@@ -3,98 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C2C Vendor Portal</title>
+<title>BenchMatch AI Pro</title>
+
 <style>
 body {font-family: Arial; margin:0; background:#f4f6f9;}
 header {background:#0a2540; color:white; padding:15px; text-align:center;}
-section {padding:20px;}
-.container {max-width:1000px; margin:auto;}
-.card {background:white; padding:15px; margin:10px 0; border-radius:10px;}
-button {padding:10px 15px; border:none; background:#0073e6; color:white; border-radius:5px; cursor:pointer;}
-textarea, input {width:100%; padding:10px; margin:5px 0;}
+.container {max-width:1100px; margin:auto; padding:20px;}
+.card {background:white; padding:20px; margin-top:20px; border-radius:10px;}
+textarea, input {width:100%; padding:10px; margin-top:10px;}
+button {padding:10px 15px; background:#0073e6; color:white; border:none; margin-top:10px; cursor:pointer;}
+.result {background:#eef4ff; padding:15px; margin-top:10px; white-space:pre-line;}
+.flex {display:flex; gap:10px;}
+.flex div {flex:1;}
 </style>
+
 </head>
 
 <body>
 
 <header>
-<h2>C2C Vendor Portal</h2>
-<p>Pre-Vetted Consultants | Fast Submission</p>
+<h2>BenchMatch AI Pro</h2>
+<p>C2C Hiring Automation Tool</p>
 </header>
 
-<section class="container">
+<div class="container">
 
-<!-- JD MATCHER -->
+<!-- JD + RESUME -->
 <div class="card">
 <h3>JD vs Resume Analyzer</h3>
-<textarea id="jd" placeholder="Paste Job Description"></textarea>
-<textarea id="resume" placeholder="Paste Resume"></textarea>
-<button onclick="analyze()">Analyze Candidate</button>
-<p id="result"></p>
+
+<div class="flex">
+<div>
+<textarea id="jd" rows="8" placeholder="Paste Job Description"></textarea>
+</div>
+
+<div>
+<input type="file" id="resumeFile">
+</div>
+</div>
+
+<button onclick="analyze()">Analyze Match</button>
+
+<div id="matchResult" class="result"></div>
 </div>
 
 <!-- EMAIL GENERATOR -->
 <div class="card">
-<h3>Email Generator</h3>
-<input id="name" placeholder="Vendor Name">
-<input id="role" placeholder="Job Role">
-<button onclick="generateEmail()">Generate Email</button>
-<textarea id="emailOutput"></textarea>
+<h3>Vendor Email Generator</h3>
+
+<input id="vendorName" placeholder="Vendor Name (John Smith)">
+<input id="companyName" placeholder="Company Name (ABC Tech)">
+<input id="jobRole" placeholder="Job Role (DevOps Engineer)">
+
+<button onclick="generateAll()">Generate Email + IDs</button>
+
+<div id="outputBox" class="result"></div>
 </div>
 
-<!-- VENDOR FINDER -->
-<div class="card">
-<h3>Vendor Email Finder</h3>
-<input id="company" placeholder="Company Name">
-<button onclick="findEmails()">Find Emails</button>
-<p id="emails"></p>
 </div>
-
-</section>
 
 <script>
+
+// Resume file read
+let resumeText = "";
+
+document.getElementById("resumeFile").addEventListener("change", function(e) {
+let file = e.target.files[0];
+if (!file) return;
+
+let reader = new FileReader();
+reader.onload = function(e) {
+resumeText = e.target.result.toLowerCase();
+};
+reader.readAsText(file);
+});
+
+// Analyze function
 function analyze() {
+
 let jd = document.getElementById("jd").value.toLowerCase();
-let resume = document.getElementById("resume").value.toLowerCase();
 
-let score = Math.floor(Math.random()*30) + 70;
+let skills = ["java","aws","kubernetes","docker","python","terraform","react","node","sql"];
 
-document.getElementById("result").innerText =
-"The candidate shows relevant experience based on the provided job description. There are strong overlaps in key skills, though a few areas may need further validation. Overall, this profile appears suitable for initial screening.\n\nMatch Score: " + score + "%";
+let matchCount = 0;
+
+skills.forEach(skill => {
+if (jd.includes(skill) && resumeText.includes(skill)) {
+matchCount++;
+}
+});
+
+let score = Math.min(100, 60 + (matchCount * 5));
+
+let result = `Candidate Evaluation Summary:
+
+The candidate shows relevant experience based on key skill alignment with the job description. Core technologies appear to match partially with some areas that may require further validation.
+
+Match Score: ${score}%
+Recommendation: Proceed with Initial Screening`;
+
+document.getElementById("matchResult").innerText = result;
 }
 
-function generateEmail() {
-let name = document.getElementById("name").value;
-let role = document.getElementById("role").value;
+// Email + ID generator
+function generateAll() {
 
-let email = `Hi ${name},
+let fullName = document.getElementById("vendorName").value.toLowerCase().trim();
+let company = document.getElementById("companyName").value.toLowerCase().trim();
+let role = document.getElementById("jobRole").value;
 
-I came across your requirement for ${role} and wanted to check if you're currently working on C2C roles.
+let nameParts = fullName.split(" ");
+let first = nameParts[0] || "";
+let last = nameParts[1] || "";
 
-We have strong consultants available who closely match your requirements.
+let domain = company.replace(/\s+/g, '') + ".com";
 
-Please let me know if you'd like to review profiles.
+// Top 3 emails
+let email1 = `${first}@${domain}`;
+let email2 = `${first}.${last}@${domain}`;
+let email3 = `${first[0]}${last}@${domain}`;
+
+let emails = `Top 3 Possible Emails:
+
+${email1}
+${email2}
+${email3}
+`;
+
+let formattedName = first.charAt(0).toUpperCase() + first.slice(1);
+
+let message = `Hi ${formattedName},
+
+I hope you're doing well.
+
+I came across your requirement for ${role} at ${company} and wanted to check if you are currently working on C2C roles.
+
+We have strong consultants available with relevant experience matching your requirement and immediate availability.
+
+Please let me know if you'd like to review the profile.
 
 Best Regards`;
 
-document.getElementById("emailOutput").value = email;
+document.getElementById("outputBox").innerText = emails + "\n\n" + message;
 }
 
-function findEmails() {
-let company = document.getElementById("company").value.toLowerCase();
-
-let domain = company.replace(/\s+/g,'') + ".com";
-
-let emails = `
-info@${domain}
-hr@${domain}
-contact@${domain}
-firstname@${domain}
-firstname.lastname@${domain}
-`;
-
-document.getElementById("emails").innerText = emails;
-}
 </script>
 
 </body>
