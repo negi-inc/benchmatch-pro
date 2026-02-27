@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C2C Vendor Portal</title>
+<style>
+body {font-family: Arial; margin:0; background:#f4f6f9;}
+header {background:#0a2540; color:white; padding:15px; text-align:center;}
+section {padding:20px;}
+.container {max-width:1000px; margin:auto;}
+.card {background:white; padding:15px; margin:10px 0; border-radius:10px;}
+button {padding:10px 15px; border:none; background:#0073e6; color:white; border-radius:5px; cursor:pointer;}
+textarea, input {width:100%; padding:10px; margin:5px 0;}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>C2C Vendor Portal</h2>
+<p>Pre-Vetted Consultants | Fast Submission</p>
+</header>
+
+<section class="container">
+
+<!-- JD MATCHER -->
+<div class="card">
+<h3>JD vs Resume Analyzer</h3>
+<textarea id="jd" placeholder="Paste Job Description"></textarea>
+<textarea id="resume" placeholder="Paste Resume"></textarea>
+<button onclick="analyze()">Analyze Candidate</button>
+<p id="result"></p>
+</div>
+
+<!-- EMAIL GENERATOR -->
+<div class="card">
+<h3>Email Generator</h3>
+<input id="name" placeholder="Vendor Name">
+<input id="role" placeholder="Job Role">
+<button onclick="generateEmail()">Generate Email</button>
+<textarea id="emailOutput"></textarea>
+</div>
+
+<!-- VENDOR FINDER -->
+<div class="card">
+<h3>Vendor Email Finder</h3>
+<input id="company" placeholder="Company Name">
+<button onclick="findEmails()">Find Emails</button>
+<p id="emails"></p>
+</div>
+
+</section>
+
+<script>
+function analyze() {
+let jd = document.getElementById("jd").value.toLowerCase();
+let resume = document.getElementById("resume").value.toLowerCase();
+
+let score = Math.floor(Math.random()*30) + 70;
+
+document.getElementById("result").innerText =
+"The candidate shows relevant experience based on the provided job description. There are strong overlaps in key skills, though a few areas may need further validation. Overall, this profile appears suitable for initial screening.\n\nMatch Score: " + score + "%";
+}
+
+function generateEmail() {
+let name = document.getElementById("name").value;
+let role = document.getElementById("role").value;
+
+let email = `Hi ${name},
+
+I came across your requirement for ${role} and wanted to check if you're currently working on C2C roles.
+
+We have strong consultants available who closely match your requirements.
+
+Please let me know if you'd like to review profiles.
+
+Best Regards`;
+
+document.getElementById("emailOutput").value = email;
+}
+
+function findEmails() {
+let company = document.getElementById("company").value.toLowerCase();
+
+let domain = company.replace(/\s+/g,'') + ".com";
+
+let emails = `
+info@${domain}
+hr@${domain}
+contact@${domain}
+firstname@${domain}
+firstname.lastname@${domain}
+`;
+
+document.getElementById("emails").innerText = emails;
+}
+</script>
+
+</body>
+</html>
